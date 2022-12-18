@@ -140,6 +140,24 @@ class ControllerProductCategory extends Controller {
 				$data['thumb'] = '';
 			}
 
+            $data['images'] = array();
+
+            $results = $this->model_catalog_category->getCategoryImages($category_id);
+
+            if($results){
+						
+                	$this->document->addScript('https://cdn.jsdelivr.net/npm/@fancyapps/ui@4.0/dist/fancybox.umd.js');
+                	$this->document->addScript('catalog/view/javascript/slick/slick.min.js');
+                
+                foreach ($results as $result) {
+                    $data['images'][] = array(
+                        'popup' => $this->model_tool_image->resize($result['image'], 1000, 1000),
+                        'thumb' => $this->model_tool_image->resize($result['image'], $this->config->get('config_image_category_width'), $this->config->get('config_image_category_height'))
+                    );
+                }
+            }
+
+
 			$data['description'] = html_entity_decode($category_info['description'], ENT_QUOTES, 'UTF-8');
 			$data['description1'] = html_entity_decode($category_info['description1'], ENT_QUOTES, 'UTF-8');
 			$data['compare'] = $this->url->link('product/compare');

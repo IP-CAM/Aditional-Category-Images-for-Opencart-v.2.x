@@ -7,6 +7,15 @@ class ModelCatalogCategory extends Model {
 
 		$category_id = $this->db->getLastId();
 
+		if (isset($data['category_image'])) {
+			foreach ($data['category_image'] as $category_image) {
+					$sql = "INSERT INTO " . DB_PREFIX . "category_image SET category_id = '" . (int)$category_id . "', image = '" . $this->db->escape($category_image['image']) . "', sort_order = '" . (int)$category_image['sort_order'] . "'";
+					var_dump($sql);
+					$this->db->query($sql);
+			}
+		}
+		
+
 		if (isset($data['image'])) {
 			$this->db->query("UPDATE " . DB_PREFIX . "category SET image = '" . $this->db->escape($data['image']) . "' WHERE category_id = '" . (int)$category_id . "'");
 		}
@@ -63,6 +72,18 @@ class ModelCatalogCategory extends Model {
 		$this->event->trigger('pre.admin.category.edit', $data);
 
 		$this->db->query("UPDATE " . DB_PREFIX . "category SET parent_id = '" . (int)$data['parent_id'] . "', `top` = '" . (isset($data['top']) ? (int)$data['top'] : 0) . "', `column` = '" . (int)$data['column'] . "', sort_order = '" . (int)$data['sort_order'] . "', status = '" . (int)$data['status'] . "', date_modified = NOW() WHERE category_id = '" . (int)$category_id . "'");
+
+
+        if (isset($data['category_image'])) {
+				$this->db->query("DELETE FROM " . DB_PREFIX . "category_image WHERE category_id = '" . (int)$category_id . "'");
+
+            foreach ($data['category_image'] as $category_image) {
+               $sql =  "INSERT INTO " . DB_PREFIX . "category_image SET category_id = '" . (int)$category_id . "', image = '" . $this->db->escape($category_image['image']) . "', sort_order = '" . (int)$category_image['sort_order'] . "'";
+					var_dump($sql);
+					$this->db->query($sql);
+            }
+        }
+
 
 		if (isset($data['image'])) {
 			$this->db->query("UPDATE " . DB_PREFIX . "category SET image = '" . $this->db->escape($data['image']) . "' WHERE category_id = '" . (int)$category_id . "'");
@@ -207,6 +228,12 @@ class ModelCatalogCategory extends Model {
 			$this->repairCategories($category['category_id']);
 		}
 	}
+
+    public function getCategoryImages($category_id) {
+        $query = $this->db->query("SELECT * FROM " . DB_PREFIX . "category_image WHERE category_id = '" . (int)$category_id . "' ORDER BY sort_order ASC");
+
+        return $query->rows;
+    }
 
 	public function getCategory($category_id) {
 		$query = $this->db->query("SELECT DISTINCT *, (SELECT GROUP_CONCAT(cd1.name ORDER BY level SEPARATOR '&nbsp;&nbsp;&gt;&nbsp;&nbsp;') FROM " . DB_PREFIX . "category_path cp LEFT JOIN " . DB_PREFIX . "category_description cd1 ON (cp.path_id = cd1.category_id AND cp.category_id != cp.path_id) WHERE cp.category_id = c.category_id AND cd1.language_id = '" . (int)$this->config->get('config_language_id') . "' GROUP BY cp.category_id) AS path, (SELECT DISTINCT keyword FROM " . DB_PREFIX . "url_alias WHERE query = 'category_id=" . (int)$category_id . "') AS keyword FROM " . DB_PREFIX . "category c LEFT JOIN " . DB_PREFIX . "category_description cd2 ON (c.category_id = cd2.category_id) WHERE c.category_id = '" . (int)$category_id . "' AND cd2.language_id = '" . (int)$this->config->get('config_language_id') . "'");

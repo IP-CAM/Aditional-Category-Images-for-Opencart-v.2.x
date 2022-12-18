@@ -16,6 +16,121 @@
     <div id="content" class="<?php echo $class; ?>">
       <h1 class="heading-title"><?php echo $heading_title; ?></h1>
       <?php echo $content_top; ?>
+   
+
+      <?php if ($images) { ?>
+      
+          <div class="category_images">
+
+                <div id="categoryImagesCarousel" class="carousel">
+                  <?php foreach ($images as $image){ ?>
+                    <div class="carousel__slide">
+                      <a data-fancybox="gallery"  style='display:flex; justify-content:center' href="<?php echo $image['popup'] ?>">
+                        <img src="<?php echo $image['thumb'] ?>" />
+                      </a>
+                    </div>
+                  <? }?>
+                  
+                </div>
+          </div>
+       <script>
+        $('#categoryImagesCarousel').slick({
+          infinite: false,
+          slidesToShow: 5,
+          slidesToScroll: 3,
+          dots: true,
+          arrows:true,
+          responsive: [
+              {
+                breakpoint: 1920,
+                settings: {
+                  slidesToShow: 5,
+                  slidesToScroll: 3,
+                  infinite: false,
+                  dots: true
+                }
+              },
+              {
+                breakpoint: 1300,
+                settings: {
+                  slidesToShow: 3,
+                  slidesToScroll: 2,
+                  dots: true,
+                  arrows:true,
+                }
+              },
+              {
+                breakpoint: 800,
+                settings: {
+                  slidesToShow: 2,
+                  slidesToScroll: 2,
+                  dots: true,
+                  arrows:true,
+                }
+              },
+              {
+                breakpoint: 480,
+                settings: {
+                  slidesToShow: 1,
+                  slidesToScroll: 1,
+                  dots: true,
+                  arrows:true,
+                }
+              }
+              // You can unslick at a given breakpoint now by adding:
+              // settings: "unslick"
+              // instead of a settings object
+            ]
+        });
+       </script>
+       <style>
+        .slick-next, .slick-prev{
+          background-color: #f44336;
+          border-radius: 3px;
+          width: 30px;
+          height: 30px;
+        }
+        .slick-prev{
+          left: 0;
+          
+        }
+        .slick-next{
+          right: 0;  
+        }
+        .slick-prev:hover, .slick-prev:focus,
+        .slick-next:hover, .slick-next:focus {
+          color: #0000;
+          outline: none;
+          background: #f44336;
+        }
+        .slick-prev:before {
+            font-family: 'journal-icons';
+            content: '\e610';
+            font-size: 15px;
+            opacity: 1;
+            position: absolute;
+            top: 50%;
+            left: 0;
+            margin-left: 50%;
+            -webkit-transform: translate(-50%,-50%);
+            transform: translate(-50%,-50%);
+            
+        }
+        .slick-next:before{
+          font-family: 'journal-icons';
+          content: '\e608';
+          font-size: 15px;
+          position: absolute;
+          top: 50%;
+          opacity: 1;
+          left: 0;
+          margin-left: 50%;
+          -webkit-transform: translate(-50%,-50%);
+          transform: translate(-50%,-50%);
+        }
+
+       </style>
+      <? } ?>
       <?php if ($thumb || $description) { ?>
       <div class="category-info">
         
@@ -27,9 +142,7 @@
         <?php } ?><?php echo $content_bottom; ?></div>
       </div>
       <?php } ?>
-      <?php
-      
-      ?>
+
       <?php if($this->journal2->settings->get('refine_category') === 'grid' && $this->journal2->settings->get('refine_category_images', array())): ?>
       <div class="refine-images">
         <?php foreach ($this->journal2->settings->get('refine_category_images', array()) as $category): ?>
