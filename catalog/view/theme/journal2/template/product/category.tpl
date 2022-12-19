@@ -22,11 +22,11 @@
       
           <div class="category_images">
 
-                <div id="categoryImagesCarousel" class="carousel">
+                <div id="categoryImagesCarousel" class="">
                   <?php foreach ($images as $image){ ?>
-                    <div class="carousel__slide">
+                    <div class="category-image-item">
                       <a data-fancybox="gallery"  style='display:flex; justify-content:center' href="<?php echo $image['popup'] ?>">
-                        <img src="<?php echo $image['thumb'] ?>" />
+                        <img style='max-width:100%; height:auto;' src="<?php echo $image['thumb'] ?>" />
                       </a>
                     </div>
                   <? }?>
@@ -36,7 +36,7 @@
        <script>
         $('#categoryImagesCarousel').slick({
           infinite: false,
-          slidesToShow: 5,
+          slidesToShow: 4,
           slidesToScroll: 3,
           dots: true,
           arrows:true,
@@ -44,10 +44,11 @@
               {
                 breakpoint: 1920,
                 settings: {
-                  slidesToShow: 5,
+                  slidesToShow: 4,
                   slidesToScroll: 3,
                   infinite: false,
-                  dots: true
+                  dots: true,
+                  arrows:true,
                 }
               },
               {
@@ -82,6 +83,12 @@
               // instead of a settings object
             ]
         });
+        Fancybox.bind("[data-fancybox]", {
+          infinite: false,
+          Image: {
+            zoom: false,
+          },
+        });
        </script>
        <style>
         .slick-next, .slick-prev{
@@ -89,6 +96,7 @@
           border-radius: 3px;
           width: 30px;
           height: 30px;
+          z-index: 5;
         }
         .slick-prev{
           left: 0;
